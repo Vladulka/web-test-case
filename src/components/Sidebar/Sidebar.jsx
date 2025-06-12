@@ -1,81 +1,41 @@
-import { useState } from 'react';
-import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import logo from '../../assets/logo.png';
-import PropTypes from 'prop-types';
+import MenuItem from "./MenuItem/MenuItem";
+import {bottomRoutes, routes} from "../../constants/routes";
+import {Header, Logo, SidebarWrapper, ToggleButton} from "./Basic/Basic";
+import {BottomMenu, MainMenu} from "./Basic/Menu";
 
-const routes = [
-    { title: 'Home', icon: 'fas-solid fa-house', path: '/' },
-    { title: 'Sales', icon: 'chart-line', path: '/sales' },
-    { title: 'Costs', icon: 'chart-column', path: '/costs' },
-    { title: 'Payments', icon: 'wallet', path: '/payments' },
-    { title: 'Finances', icon: 'chart-pie', path: '/finances' },
-    { title: 'Messages', icon: 'envelope', path: '/messages' },
-];
-
-const bottomRoutes = [
-    { title: 'Settings', icon: 'sliders', path: '/settings' },
-    { title: 'Support', icon: 'phone-volume', path: '/support' },
-];
-
-const Sidebar = (props) => {
-    const { color } = props;
-    const [isOpened, setIsOpened] = useState(false);
-    const containerClassnames = classnames('sidebar', { opened: isOpened });
-
-    const goToRoute = (path) => {
-        console.log(`going to "${path}"`);
-    };
+const Sidebar = ({ color }) => {
+    const [isOpened, setIsOpened] = React.useState(false);
 
     const toggleSidebar = () => {
         setIsOpened(v => !v);
     };
 
     return (
-        <div className={ containerClassnames }>
-            <div>
-                <img src={ logo } alt="TensorFlow logo"/>
-                <span>TensorFlow</span>
-                <div onClick={ toggleSidebar }>
-                    <FontAwesomeIcon icon={ isOpened ? 'angle-left' : 'angle-right' }/>
-                </div>
-            </div>
-            <div>
+        <SidebarWrapper color={color} isOpened={isOpened}>
+            <Header>
+                <Logo isOpened={isOpened} color={color}>
+                    <img src={logo} alt="TensorFlow logo" />
+                    <span>TensorFlow</span>
+                </Logo>
+                <ToggleButton onClick={toggleSidebar} isOpened={isOpened} color={color}>
+                    <FontAwesomeIcon color={color === 'dark' ? 'white' : 'black'} icon={isOpened ? 'angle-left' : 'angle-right'} />
+                </ToggleButton>
+            </Header>
+            <MainMenu>
                 {
-                    routes.map(route => (
-                        <div
-                            key={ route.title }
-                            onClick={() => {
-                                goToRoute(route.path);
-                            }}
-                        >
-                            <FontAwesomeIcon icon={ route.icon }/>
-                            <span>{ route.title }</span>
-                        </div>
-                    ))
+                    routes.map(route => (<MenuItem key={route.title} isOpened={isOpened} color={color} route={route} />))
                 }
-            </div>
-            <div>
+            </MainMenu>
+            <BottomMenu>
                 {
-                    bottomRoutes.map(route => (
-                        <div
-                            key={ route.title }
-                            onClick={() => {
-                                goToRoute(route.path);
-                            }}
-                        >
-                            <FontAwesomeIcon icon={ route.icon }/>
-                            <span>{ route.title }</span>
-                        </div>
-                    ))
+                    bottomRoutes.map(route => (<MenuItem key={route.title} isOpened={isOpened} color={color} route={route} />))
                 }
-            </div>
-        </div>
+            </BottomMenu>
+        </SidebarWrapper>
     );
-};
-
-Sidebar.propTypes = {
-    color: PropTypes.string,
 };
 
 export default Sidebar;
